@@ -1,0 +1,12 @@
+node_modules/
+dist/
+docs/
+.codex
+.env
+.env.*
+!.env.example
+AGENTS.md
+backend/supabase
+backend/test
+coverage/
+*.log
