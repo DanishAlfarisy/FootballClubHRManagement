@@ -11,9 +11,17 @@ import { payrollRoutes } from './routes/payroll.js'
 import { contractRoutes } from './routes/contracts.js'
 import { errorHandler, notFound } from './middleware/errors.js'
 
+const allowedOrigins = [
+  'http://localhost:5173',
+  ...(process.env.FRONTEND_URL || '')
+    .split(',')
+    .map(origin => origin.trim())
+    .filter(Boolean)
+]
+
 export const app = express()
 app.use(helmet())
-app.use(cors({ origin: process.env.FRONTEND_URL?.split(',') || 'http://localhost:5173' }))
+app.use(cors({ origin: allowedOrigins }))
 app.use(express.json({ limit: '2mb' }))
 if (process.env.NODE_ENV !== 'test') app.use(morgan('dev'))
 app.get('/api/health', (_req, res) => res.json({ status: 'ok', database: Boolean(process.env.SUPABASE_URL), timestamp: new Date().toISOString() }))
@@ -25,3 +33,4 @@ app.use('/api', authenticate, documentRoutes)
 app.use('/api', authenticate, payrollRoutes)
 app.use(notFound)
 app.use(errorHandler)
+export default app
